@@ -181,7 +181,7 @@ const EmailBuilder = () => {
 
 
         <div style={fieldStyle}>
-          <label style={labelStyle}>Employee Email</label>
+          <label style={labelStyle}>Employee Email(Template)</label>
           <input
             type="email"
             value={formData.employeeEmail}
