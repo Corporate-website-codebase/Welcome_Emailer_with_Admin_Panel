@@ -19,8 +19,7 @@ const EmailBuilder = () => {
     culture2:
       "Our culture has grown over years of curiosity, innovation and shared learning. As you begin your K&A journey, connect with colleagues, explore new possibilities and don't hesitate to ask, we're always here to help.",
     imageSlug: "Soumya_Jha.png",
-    profileImageUrl:
-      "https://source.kalolwala.com/welcome/employee/Soumya_Jha.png",
+
   });
 
   const [previewHtml, setPreviewHtml] = useState("");
@@ -241,16 +240,7 @@ const EmailBuilder = () => {
           />
         </div>
 
-        <div style={{ marginBottom: "24px" }}>
-          <label style={labelStyle}>Profile Image URL</label>
-          <input
-            type="url"
-            value={formData.profileImageUrl}
-            onChange={(e) => handleChange("profileImageUrl", e.target.value)}
-            placeholder="https://..."
-            style={inputStyle}
-          />
-        </div>
+
 
         <button
           onClick={sendEmail}

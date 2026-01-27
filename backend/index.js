@@ -63,7 +63,7 @@ function compileEmail(formData) {
     WELCOME: formData.welcome,
     ABOUT_TITLE: aboutTitle,
     ABOUT_DESC: formData.aboutDesc,
-    EMAIL: formData.employeeEmail || formData.email,
+    EMAIL: formData.employeeEmail,
     PHONE: formData.phone,
     CULTURE_1: formData.culture1,
     CULTURE_2: formData.culture2,
