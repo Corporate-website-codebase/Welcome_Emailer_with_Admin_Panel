@@ -3,8 +3,8 @@ import Login from "./components/Login";
 import LoadingScreen from "./components/LoadingScreen";
 
 // API URL - uses environment variable in production, localhost in development
-const API_URL = import.meta.env.API_URL || "http://localhost:3001";
-console.log(API_URL)
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+console.log("api-url", API_URL);
 
 const EmailBuilder = () => {
   const [user, setUser] = useState(null);
