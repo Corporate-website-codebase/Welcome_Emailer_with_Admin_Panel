@@ -2,10 +2,14 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const { Resend } = require("resend");
 const ejs = require("ejs");
 const bodyParser = require("body-parser");
 const { emailTemplate } = require("./models/emailTemplate");
+const { initDatabase } = require("./db");
+const authRoutes = require("./routes/auth");
+const authMiddleware = require("./middleware/auth");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -40,8 +44,15 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.static("public"));
+
+// Initialize database
+initDatabase();
+
+// Auth routes
+app.use("/api/auth", authRoutes);
 
 // Email template (stored as EJS string)
 
@@ -85,7 +96,7 @@ app.get("/health", (req, res) => {
 });
 
 // Preview endpoint
-app.post("/api/preview", (req, res) => {
+app.post("/api/preview", authMiddleware, (req, res) => {
   try {
     const html = compileEmail(req.body);
     res.json({ html });
@@ -96,7 +107,7 @@ app.post("/api/preview", (req, res) => {
 });
 
 // Send email endpoint
-app.post("/api/send", async (req, res) => {
+app.post("/api/send", authMiddleware, async (req, res) => {
   try {
     const html = compileEmail(req.body);
 

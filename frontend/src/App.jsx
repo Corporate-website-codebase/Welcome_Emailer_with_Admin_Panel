@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from "react";
+import Login from "./components/Login";
+import LoadingScreen from "./components/LoadingScreen";
 
 // API URL - uses environment variable in production, localhost in development
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 const EmailBuilder = () => {
+  const [user, setUser] = useState(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(true);
   const [formData, setFormData] = useState({
     name: "Sarika Alate",
     pronoun: "she",
@@ -19,12 +24,45 @@ const EmailBuilder = () => {
     culture2:
       "Our culture has grown over years of curiosity, innovation and shared learning. As you begin your K&A journey, connect with colleagues, explore new possibilities and don't hesitate to ask, we're always here to help.",
     imageSlug: "Soumya_Jha.png",
-
   });
 
   const [previewHtml, setPreviewHtml] = useState("");
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState("");
+
+  // Check authentication on mount
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/auth/me`, {
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.user);
+      }
+    } catch (error) {
+      console.error("Auth check failed:", error);
+    } finally {
+      setIsAuthLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await fetch(`${API_URL}/api/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+      setUser(null);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -35,6 +73,7 @@ const EmailBuilder = () => {
       const response = await fetch(`${API_URL}/api/preview`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(formData),
       });
 
@@ -75,6 +114,7 @@ const EmailBuilder = () => {
       const response = await fetch(`${API_URL}/api/send`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(formData),
       });
       const data = await response.json();
@@ -87,8 +127,10 @@ const EmailBuilder = () => {
   };
 
   useEffect(() => {
-    generatePreview();
-  }, [formData]);
+    if (user) {
+      generatePreview();
+    }
+  }, [formData, user]);
 
   const inputStyle = {
     width: "100%",
@@ -111,6 +153,35 @@ const EmailBuilder = () => {
   const fieldStyle = {
     marginBottom: "20px",
   };
+
+  // Show loading screen on initial load
+  if (showLoadingScreen) {
+    return <LoadingScreen onComplete={() => setShowLoadingScreen(false)} />;
+  }
+
+  // Show loading while checking auth
+  if (isAuthLoading) {
+    return (
+      <div
+        style={{
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#1a1a1a",
+          color: "#fff",
+          fontSize: "18px",
+        }}
+      >
+        Loading...
+      </div>
+    );
+  }
+
+  // Show login if not authenticated
+  if (!user) {
+    return <Login onLoginSuccess={(userData) => setUser(userData)} />;
+  }
 
   return (
     <div
@@ -135,6 +206,35 @@ const EmailBuilder = () => {
         >
           Email Builder
         </h1>
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "20px",
+            paddingBottom: "20px",
+            borderBottom: "1px solid #333",
+          }}
+        >
+          <div style={{ fontSize: "14px", color: "#888" }}>
+            Logged in as: <span style={{ color: "#fff" }}>{user.email}</span>
+          </div>
+          <button
+            onClick={handleLogout}
+            style={{
+              padding: "8px 16px",
+              backgroundColor: "#444",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              fontSize: "14px",
+              cursor: "pointer",
+            }}
+          >
+            Logout
+          </button>
+        </div>
 
         <div style={fieldStyle}>
           <label style={labelStyle}>Employee Name</label>
@@ -179,7 +279,6 @@ const EmailBuilder = () => {
           />
         </div>
 
-
         <div style={fieldStyle}>
           <label style={labelStyle}>Employee Email(Template)</label>
           <input
@@ -189,7 +288,7 @@ const EmailBuilder = () => {
             style={inputStyle}
           />
         </div>
-                <div style={fieldStyle}>
+        <div style={fieldStyle}>
           <label style={labelStyle}>Send To</label>
           <input
             type="email"
@@ -239,8 +338,6 @@ const EmailBuilder = () => {
             style={inputStyle}
           />
         </div>
-
-
 
         <button
           onClick={sendEmail}
