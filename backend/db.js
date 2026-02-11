@@ -3,8 +3,8 @@ const { Pool } = require("pg");
 // Supabase PostgreSQL connection
 const pool = new Pool({
   connectionString:
-    process.env.DATABASE_URL ,
- ssl: {
+    process.env.DATABASE_URL || "postgresql://localhost:5432/emailer",
+  ssl: {
     rejectUnauthorized: false,
   },
 });
