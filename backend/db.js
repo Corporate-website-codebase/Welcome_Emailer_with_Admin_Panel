@@ -25,11 +25,7 @@ const initDatabase = async () => {
     console.error("❌ Error initializing database:", error.message);
     if (error.code === "ENOTFOUND") {
       console.error("\n⚠️  IMPORTANT: Cannot connect to Supabase database.");
-      console.error("Please verify your DATABASE_URL in the .env file.");
-      console.error("Get the correct connection string from:");
-      console.error(
-        "Supabase Dashboard → Project Settings → Database → Connection String\n",
-      );
+
     }
   }
 };
