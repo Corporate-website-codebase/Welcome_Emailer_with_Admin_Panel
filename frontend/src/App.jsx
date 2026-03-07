@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Login from "./components/Login";
-import LoadingScreen from "./components/LoadingScreen";
+import Login from "../components/Login";
+import LoadingScreen from "../components/LoadingScreen";
 
 // API URL - uses environment variable in production, localhost in development
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
@@ -134,20 +134,25 @@ const EmailBuilder = () => {
 
   const inputStyle = {
     width: "100%",
-    padding: "10px",
-    backgroundColor: "#2a2a2a",
-    border: "1px solid #444",
-    borderRadius: "4px",
+    padding: "12px 16px",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    borderRadius: "12px",
     color: "#fff",
     fontSize: "14px",
+    fontFamily: "'Inter', sans-serif",
     boxSizing: "border-box",
+    outline: "none",
+    transition: "border-color 0.2s, background-color 0.2s",
   };
 
   const labelStyle = {
     display: "block",
     marginBottom: "6px",
-    fontSize: "14px",
+    fontSize: "13px",
     fontWeight: "500",
+    color: "rgba(255, 255, 255, 0.5)",
+    letterSpacing: "0.02em",
   };
 
   const fieldStyle = {
@@ -168,12 +173,23 @@ const EmailBuilder = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#1a1a1a",
+          backgroundColor: "#000",
           color: "#fff",
           fontSize: "18px",
+          fontFamily: "'Inter', sans-serif",
         }}
       >
-        Loading...
+        <div
+          style={{
+            width: "32px",
+            height: "32px",
+            border: "2px solid rgba(247, 205, 70, 0.2)",
+            borderTopColor: "#F7CD46",
+            borderRadius: "50%",
+            animation: "spin 0.8s linear infinite",
+          }}
+        />
+        <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
       </div>
     );
   }
@@ -188,23 +204,30 @@ const EmailBuilder = () => {
       style={{
         display: "flex",
         height: "100vh",
-        fontFamily: "system-ui, -apple-system, sans-serif",
+        fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+        backgroundColor: "#000",
       }}
     >
       <div
         style={{
-          width: "400px",
-          backgroundColor: "#1a1a1a",
+          width: "420px",
+          backgroundColor: "#000",
           color: "#fff",
           overflowY: "auto",
-          padding: "24px",
-          borderRight: "1px solid #333",
+          padding: "28px 24px",
+          borderRight: "1px solid rgba(255, 255, 255, 0.08)",
         }}
       >
         <h1
-          style={{ fontSize: "24px", marginBottom: "24px", color: "#ffde00" }}
+          style={{
+            fontSize: "22px",
+            marginBottom: "24px",
+            fontWeight: "700",
+            letterSpacing: "-0.02em",
+          }}
         >
-          Email Builder
+          <span style={{ color: "#fff" }}>Email </span>
+          <span style={{ color: "#F7CD46" }}>Builder</span>
         </h1>
 
         <div
@@ -212,24 +235,30 @@ const EmailBuilder = () => {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            marginBottom: "20px",
+            marginBottom: "24px",
             paddingBottom: "20px",
-            borderBottom: "1px solid #333",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
           }}
         >
-          <div style={{ fontSize: "14px", color: "#888" }}>
-            Logged in as: <span style={{ color: "#fff" }}>{user.email}</span>
+          <div style={{ fontSize: "13px", color: "#71717a" }}>
+            Logged in as:{" "}
+            <span style={{ color: "rgba(255, 255, 255, 0.8)" }}>
+              {user.email}
+            </span>
           </div>
           <button
             onClick={handleLogout}
             style={{
-              padding: "8px 16px",
-              backgroundColor: "#444",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              fontSize: "14px",
+              padding: "8px 18px",
+              backgroundColor: "rgba(255, 255, 255, 0.05)",
+              color: "rgba(255, 255, 255, 0.7)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              borderRadius: "12px",
+              fontSize: "13px",
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: "500",
               cursor: "pointer",
+              transition: "background-color 0.2s, border-color 0.2s",
             }}
           >
             Logout
@@ -344,15 +373,18 @@ const EmailBuilder = () => {
           disabled={sending}
           style={{
             width: "100%",
-            padding: "12px",
-            backgroundColor: "#ffde00",
-            color: "#000",
+            padding: "14px",
+            backgroundColor: sending ? "rgba(255, 255, 255, 0.08)" : "#f5c518",
+            color: sending ? "rgba(255, 255, 255, 0.4)" : "#000",
             border: "none",
-            borderRadius: "4px",
-            fontSize: "16px",
-            fontWeight: "600",
+            borderRadius: "12px",
+            fontSize: "15px",
+            fontWeight: "700",
+            fontFamily: "'Inter', sans-serif",
             cursor: sending ? "not-allowed" : "pointer",
-            opacity: sending ? 0.6 : 1,
+            opacity: sending ? 0.7 : 1,
+            transition: "transform 0.2s, box-shadow 0.2s",
+            letterSpacing: "-0.01em",
           }}
         >
           {sending ? "Sending..." : "Send Email"}
@@ -362,12 +394,16 @@ const EmailBuilder = () => {
           <div
             style={{
               marginTop: "16px",
-              padding: "12px",
+              padding: "12px 16px",
               backgroundColor: message.includes("success")
-                ? "#1a4d2e"
-                : "#4d1a1a",
-              borderRadius: "4px",
-              fontSize: "14px",
+                ? "rgba(34, 197, 94, 0.1)"
+                : "rgba(239, 68, 68, 0.1)",
+              border: message.includes("success")
+                ? "1px solid rgba(34, 197, 94, 0.2)"
+                : "1px solid rgba(239, 68, 68, 0.2)",
+              color: message.includes("success") ? "#86efac" : "#fca5a5",
+              borderRadius: "12px",
+              fontSize: "13px",
             }}
           >
             {message}
@@ -378,7 +414,7 @@ const EmailBuilder = () => {
       <div
         style={{
           flex: 1,
-          backgroundColor: "#f5f5f5",
+          backgroundColor: "#0a0a0a",
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
@@ -386,12 +422,22 @@ const EmailBuilder = () => {
       >
         <div
           style={{
-            padding: "24px",
-            backgroundColor: "#fff",
-            borderBottom: "1px solid #ddd",
+            padding: "20px 24px",
+            backgroundColor: "rgba(18, 18, 20, 0.6)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
           }}
         >
-          <h2 style={{ margin: 0, fontSize: "18px", color: "#333" }}>
+          <h2
+            style={{
+              margin: 0,
+              fontSize: "16px",
+              fontWeight: "600",
+              color: "rgba(255, 255, 255, 0.8)",
+              letterSpacing: "-0.01em",
+            }}
+          >
             Live Preview
           </h2>
         </div>
