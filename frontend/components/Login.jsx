@@ -72,6 +72,23 @@ const Login = ({ onLoginSuccess }) => {
           border: "1px solid rgba(255, 255, 255, 0.08)",
         }}
       >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginBottom: "24px",
+          }}
+        >
+          <img
+            src="/kalolwala-favicon.webp"
+            alt="KNA Logo"
+            style={{
+              width: "64px",
+              height: "64px",
+              objectFit: "contain",
+            }}
+          />
+        </div>
         <h1
           style={{
             color: "#fff",

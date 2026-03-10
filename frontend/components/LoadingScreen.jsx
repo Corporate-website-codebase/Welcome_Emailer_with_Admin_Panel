@@ -13,7 +13,7 @@ export default function LoadingScreen({ onComplete }) {
         autoAlpha: 0,
         scale: 0.9,
         rotationX: 0,
-        rotationY: 0
+        rotationY: 0,
       });
 
       gsap.set(containerRef.current, { perspective: 1000 });
@@ -29,8 +29,10 @@ export default function LoadingScreen({ onComplete }) {
           if (!ref) return;
 
           // 3. Use .to() exclusively. The starting state is already locked in by gsap.set()
-          tl.to(ref, { autoAlpha: 1, scale: 1 })
-            .to(ref, { [exitAxis]: 90, autoAlpha: 0 });
+          tl.to(ref, { autoAlpha: 1, scale: 1 }).to(ref, {
+            [exitAxis]: 90,
+            autoAlpha: 0,
+          });
         };
 
         animateImage(imgRefs.current[0], "rotationY");
@@ -41,7 +43,8 @@ export default function LoadingScreen({ onComplete }) {
           autoAlpha: 0,
           duration: 0.6,
           onComplete: () => {
-            if (containerRef.current) containerRef.current.style.display = "none";
+            if (containerRef.current)
+              containerRef.current.style.display = "none";
             if (onComplete) onComplete();
           },
         });
@@ -49,38 +52,44 @@ export default function LoadingScreen({ onComplete }) {
     }, containerRef);
 
     // Track when all images are fully loaded before firing the animation
-    const imageElements = imgRefs.current.map(el => el?.querySelector('img')).filter(Boolean);
+    const imageElements = imgRefs.current
+      .map((el) => el?.querySelector("img"))
+      .filter(Boolean);
     let loadedCount = 0;
     let animationStarted = false;
+    let fallbackTimeout;
 
     const attemptAnimation = () => {
       if (animationStarted) return;
       animationStarted = true;
+      clearTimeout(fallbackTimeout);
       ctx.triggerAnimation();
     };
+
+    // Fallback: start animation after 1.5s maximum to prevent infinite loading
+    fallbackTimeout = setTimeout(attemptAnimation, 1500);
 
     if (imageElements.length === 0) {
       attemptAnimation();
     } else {
+      const onImageReady = () => {
+        loadedCount++;
+        if (loadedCount === imageElements.length) attemptAnimation();
+      };
+
       imageElements.forEach((img) => {
         if (img.complete) {
-          loadedCount++;
-          if (loadedCount === imageElements.length) attemptAnimation();
+          onImageReady();
         } else {
           // Listen to both load and error so we don't hang indefinitely
-          img.addEventListener("load", () => {
-            loadedCount++;
-            if (loadedCount === imageElements.length) attemptAnimation();
-          });
-          img.addEventListener("error", () => {
-            loadedCount++;
-            if (loadedCount === imageElements.length) attemptAnimation();
-          });
+          img.addEventListener("load", onImageReady, { once: true });
+          img.addEventListener("error", onImageReady, { once: true });
         }
       });
     }
 
     return () => {
+      clearTimeout(fallbackTimeout);
       ctx.revert();
     };
   }, [onComplete]);
