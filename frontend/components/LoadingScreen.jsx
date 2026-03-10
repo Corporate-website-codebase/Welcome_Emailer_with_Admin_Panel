@@ -26,7 +26,6 @@ export default function LoadingScreen({ onComplete }) {
         const animateImage = (ref, exitAxis) => {
           if (!ref) return;
 
-          // 3. Use .to() exclusively. The starting state is already locked in by gsap.set()
           tl.to(ref, { autoAlpha: 1, scale: 1 }).to(ref, {
             [exitAxis]: 90,
             autoAlpha: 0,
