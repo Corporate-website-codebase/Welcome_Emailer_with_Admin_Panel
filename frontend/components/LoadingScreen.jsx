@@ -7,8 +7,6 @@ export default function LoadingScreen({ onComplete }) {
 
   useLayoutEffect(() => {
     let ctx = gsap.context((self) => {
-      // 1. INSTANTLY lock all starting values before the timeline is created.
-      // This prevents the timeline from delaying the initial state application.
       gsap.set(imgRefs.current, {
         autoAlpha: 0,
         scale: 0.9,
